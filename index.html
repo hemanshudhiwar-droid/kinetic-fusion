@@ -53,7 +53,8 @@ const GAME_INFO=[
 {id:'reaction',title:'Reaction Rush',icon:'↗',desc:'A target appears in a random spot. Find it fast before the short timer runs out.',tag:'SPEED / 10 ROUNDS',glow:'#a88bff'},
 {id:'math',title:'Math Sprint',icon:'∑',desc:'Solve quick-fire equations against the clock. Difficulty rises as you go.',tag:'LOGIC / 30 SEC',glow:'#85ffc5'},
 {id:'bomb',title:'Safecracker Grid',icon:'⬡',desc:'Reveal safe tiles to build a round bonus. Bank it when you want; a hidden bomb ends the current round.',tag:'RISK / BANK BONUS',glow:'#ffd777'},
-{id:'legacy',title:'Kinetic Fusion',icon:'⌁',desc:'Return to the original reflex game with Classic, Zen, Chaos and sequence-memory modes.',tag:'LEGACY / 4 MODES',glow:'#ff6b89'}
+{id:'kfclassic',title:'Kinetic Fusion: Classic',icon:'⌁',desc:'Play the original balanced reflex challenge: react to direction prompts and click targets before time runs out.',tag:'KINETIC FUSION / CLASSIC',glow:'#ff6b89'},
+{id:'kfchaos',title:'Kinetic Fusion: Chaos',icon:'✣',desc:'Take on the original high-intensity mode with multiple targets and faster decisions.',tag:'KINETIC FUSION / CHAOS',glow:'#ff9b62'}
 ];
 const STORE='hxgame_state_v1';
 function freshState(){return {coins:0,earned:0,runs:0,name:'Player One',played:[],games:{memory:{runs:0,best:0},reaction:{runs:0,best:0},math:{runs:0,best:0},bomb:{runs:0,best:0}},challenges:{},certs:[]};}
@@ -86,7 +87,7 @@ function awardCoins(n){n=Math.max(0,Math.floor(n));state.coins+=n;state.earned+=
 function checkCerts(){CERTS.forEach(c=>{if(c.need(state)&&!state.certs.includes(c.id)){state.certs.push(c.id);toast('Certificate unlocked: '+c.title);}});}
 function checkChallenges(){CHALLENGES.forEach(c=>{if(!state.challenges[c.id]&&c.metric(state)>=c.goal){state.challenges[c.id]=true;state.coins+=c.reward;state.earned+=c.reward;toast('Challenge cleared: '+c.title+'  +'+c.reward+' HHD');}});checkCerts();}
 function recordRun(id,score,coins){state.runs++;if(!state.played.includes(id))state.played.push(id);if(state.games[id]){state.games[id].runs++;state.games[id].best=Math.max(state.games[id].best,Math.floor(score));}checkChallenges();persist();updateUI();document.getElementById('playCoins').textContent=state.coins;return coins;}
-function launchGame(id){if(id==='legacy'){location.href='kinetic-fusion.html';return;}activeGame=id;session={};const info=GAME_INFO.find(g=>g.id===id);document.getElementById('playTitle').textContent=info.title;document.getElementById('playEyebrow').textContent='ARCADE SESSION // '+info.tag;document.getElementById('playCoins').textContent=state.coins;document.getElementById('playStatus').textContent='';showView('play');if(id==='memory')startMemory();if(id==='reaction')startReaction();if(id==='math')startMath();if(id==='bomb')startBomb();}
+function launchGame(id){if(id==='kfclassic'){location.href='kinetic-fusion.html?mode=classic';return;}if(id==='kfchaos'){location.href='kinetic-fusion.html?mode=chaos';return;}activeGame=id;session={};const info=GAME_INFO.find(g=>g.id===id);document.getElementById('playTitle').textContent=info.title;document.getElementById('playEyebrow').textContent='ARCADE SESSION // '+info.tag;document.getElementById('playCoins').textContent=state.coins;document.getElementById('playStatus').textContent='';showView('play');if(id==='memory')startMemory();if(id==='reaction')startReaction();if(id==='math')startMath();if(id==='bomb')startBomb();}
 function leaveGame(){if(session&&session.timer)clearInterval(session.timer);if(session&&session.timeout)clearTimeout(session.timeout);showView('games');}
 function setBox(html){document.getElementById('gameBox').innerHTML=html;}
 function setStatus(s){document.getElementById('playStatus').textContent=s;}
