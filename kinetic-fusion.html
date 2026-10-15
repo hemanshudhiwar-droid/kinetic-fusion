@@ -538,7 +538,8 @@ const DIRS=['UP','DOWN','LEFT','RIGHT'];
 const SYMS={UP:'↑',DOWN:'↓',LEFT:'←',RIGHT:'→',CLICK:'●'};
 const HINTS={UP:'W / ↑',DOWN:'S / ↓',LEFT:'A / ←',RIGHT:'D / →'};
 const DESCS={classic:'Balanced difficulty · Main scoring mode',zen:'No timer · No pressure · Accuracy focus',chaos:'Multiple targets · Extreme brain overload',memory:'Sequence shown · Repeat it · Working memory'};
-let selModeId='classic';
+let selModeId=new URLSearchParams(window.location.search).get('mode');
+if(!['classic','chaos'].includes(selModeId))selModeId='classic';
 
 function selMode(el,m){
   selModeId=m;
@@ -546,6 +547,10 @@ function selMode(el,m){
   el.classList.add('active');
   document.getElementById('mda').textContent=DESCS[m];
 }
+
+// Preselect Classic or Chaos when launched from the HXgame arcade.
+document.querySelectorAll('.mode-chip').forEach(c=>{const match=c.getAttribute('onclick').match(/'([^']+)'\)$/);if(match&&match[1]===selModeId)c.classList.add('active');else c.classList.remove('active');});
+document.getElementById('mda').textContent=DESCS[selModeId];
 
 // Global Share Utility
 function shareGame() {
